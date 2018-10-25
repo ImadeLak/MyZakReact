@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "sdkVersion": "27.0.0",
+    "orientation": "portrait",
+    "name": "myZak",
+    "android": {
+      "package": "com.example.myZak"
+    },
+    "slug": "myzak",
+    "version": "0.1.0",
+    "description": "",
+    "splash": {
+      "image": "./src/style/images/splash.png",
+      "backgroundColor": "#00b894"
+    }
+  }
+}
