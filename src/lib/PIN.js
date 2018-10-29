@@ -173,7 +173,12 @@ module.exports = class Pin extends Component {
         </View>
 
         <View style={styles.row}>
-          <View style={[styles.button, { backgroundColor: "transparent" }]} />
+          <View
+            style={[
+              styles.button,
+              { backgroundColor: "transparent", borderBottomWidth: 0 }
+            ]}
+          />
           <TouchableOpacity
             onPress={() => {
               this.addNumber(0);
@@ -204,14 +209,15 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: window.width * 0.65,
+    width: window.width * 0.75,
     marginBottom: 20
   },
 
   button: {
-    borderRadius: (window.width * 0.18) / 2,
-
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    //borderRadius: (window.width * 0.18) / 2,
+    borderColor: "white",
+    borderBottomWidth: 0.3,
+    //backgroundColor: "rgba(255, 255, 255, 0.12)",
     width: window.width * 0.18,
     height: window.width * 0.18,
     justifyContent: "center",
@@ -221,7 +227,8 @@ const styles = StyleSheet.create({
   text: {
     color: "#fff",
     //fontFamily: "Arial",
-    fontWeight: "bold"
+    //fontWeight: "bold",
+    fontSize: 16
   },
 
   emptyBox: {

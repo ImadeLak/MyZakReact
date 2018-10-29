@@ -154,7 +154,8 @@ class SituationResume extends React.Component {
             isBlocPrecedentSupNissab = isSupNissab;
           }
         }
-        console.log("dernierBlocNissab", dernierBlocNissab);
+        //console.log("dernierBlocNissab", dernierBlocNissab);
+        console.log("Home !");
 
         dateZakat = momentHijri(dernierBlocNissab.date).add(1, "iYear");
         nbJours = dateZakat.diff(moment(), "days");

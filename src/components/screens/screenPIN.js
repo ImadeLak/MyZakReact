@@ -19,6 +19,7 @@ import { NavigationActions, StackActions } from "react-navigation";
 
 import Pin from "../../lib/PIN";
 import { MAINCOLOR } from "../../style/zakStyles";
+import { connect } from "react-redux";
 
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
@@ -134,7 +135,7 @@ export class ConfirmerPIN extends Component {
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-export class LoginPIN extends Component {
+class LoginPINClass extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -149,33 +150,44 @@ export class LoginPIN extends Component {
 
   componentWillUnmountMount() {
     if (Platform.OS === "android") {
-      Expo.Fingerprint.cancelAuthenticate();
+      Expo.LocalAuthentication.cancelAuthenticate();
       console("Fingerprint OFF");
     }
   }
+
+  _gererPINetFingerPrint() {
+    console.log("APPSTATE", AppState.currentState);
+    console.log("NB BLOCS", this.props.blocs.length);
+    //Si on réouvre l'appli
+    if (AppState.currentState == "active" && this.state.fingerprintProof) {
+      //Si on a pas passé la HOME
+      if (this.props.blocs.length == 0) {
+        this.scanBiometrics();
+      } else {
+        console.log("il faut ouvrir PIN");
+        this.props.navigation.navigate("LoginPIN");
+      }
+    } else {
+      Expo.LocalAuthentication.cancelAuthenticate();
+    }
+  }
+
   async componentDidMount() {
     this.setState({ bonPIN: await SecureStore.getItemAsync("pin") });
     this.checkDeviceForHardware();
 
-    AppState.addEventListener("change", state => {
-      console.log("APPSTATE", state);
-      if (state == "active" && this.state.fingerprintProof) {
-        this.scanBiometrics();
-      } else {
-        Expo.Fingerprint.cancelAuthenticate();
-      }
-    });
+    AppState.addEventListener("change", this._gererPINetFingerPrint.bind(this));
   }
 
   checkDeviceForHardware = async () => {
-    let compatible = await Expo.Fingerprint.hasHardwareAsync();
+    let compatible = await Expo.LocalAuthentication.hasHardwareAsync();
     if (compatible) {
       this.checkForBiometrics();
     }
   };
 
   checkForBiometrics = async () => {
-    let biometricRecords = await Expo.Fingerprint.isEnrolledAsync();
+    let biometricRecords = await Expo.LocalAuthentication.isEnrolledAsync();
     if (biometricRecords) {
       this.setState({ fingerprintProof: true });
       this.scanBiometrics();
@@ -185,7 +197,9 @@ export class LoginPIN extends Component {
   scanBiometrics = async () => {
     console.log("SCAN", this.state.nbEssai);
 
-    let result = await Expo.Fingerprint.authenticateAsync("Biometric Scan.");
+    let result = await Expo.LocalAuthentication.authenticateAsync(
+      "Biometric Scan."
+    );
 
     if (result.success) {
       this.props.navigation.dispatch(
@@ -230,8 +244,20 @@ export class LoginPIN extends Component {
 
   async checkPin(PIN) {
     console.log("check", PIN);
+    console.log("nb blocs", this.props.blocs.length);
     if (PIN == this.state.bonPIN) {
-      this.props.navigation.navigate("Home");
+      // On verifie si c'est le premier login ou pas
+      if (this.props.blocs.length == 0) {
+        this.props.navigation.dispatch(
+          StackActions.reset({
+            index: 0,
+            key: null,
+            actions: [NavigationActions.navigate({ routeName: "Home" })]
+          })
+        );
+      } else {
+        this.props.navigation.goBack();
+      }
     } else {
       //Alert.alert("Wrong Pin");
       if (this.state.nbEssai == this.state.nbEssaiAutorise - 1) {
@@ -258,25 +284,32 @@ export class LoginPIN extends Component {
     return (
       <View style={styles.container}>
         {this.state.fingerprintProof ? (
-          <Icon
-            type="MaterialIcons"
-            name="fingerprint"
-            style={{
-              fontSize: 34,
-              color: "white",
-              marginBottom: 15
-            }}
-          />
+          <View style={{ marginBottom: 40, alignItems: "center" }}>
+            <Icon
+              type="MaterialIcons"
+              name="fingerprint"
+              style={{
+                fontSize: 45,
+                color: "white",
+                marginBottom: 10
+              }}
+            />
+            <Text style={{ color: "white", fontSize: 12 }}>
+              Emprunte digitale
+            </Text>
+          </View>
         ) : (
-          <Text />
+          <View />
         )}
 
         {this.state.nbEssai > 0 ? (
-          <Text style={{ color: "white", marginBottom: 15, fontSize: 15 }}>
+          <Text style={{ color: "white", marginBottom: 25, fontSize: 15 }}>
             Plus que {this.state.nbEssaiAutorise - this.state.nbEssai} tenative
           </Text>
         ) : (
-          <Text />
+          <Text style={{ color: "white", marginBottom: 25, fontSize: 15 }}>
+            Veuillez entrer votre code PIN
+          </Text>
         )}
 
         <Pin
@@ -291,13 +324,25 @@ export class LoginPIN extends Component {
           }}
           styleEmptyBox={{ borderColor: "white" }}
           styleFullBox={{ borderColor: "white", backgroundColor: "white" }}
-          styleText={{ fontSize: 16 }}
+          styleText={{ fontSize: 25 }}
           styleButton={{ backgroundColor: "#4b4648" }}
         />
       </View>
     );
   }
 }
+
+function mapStateToProps(state) {
+  return {
+    blocs: state.dataReducer.blocs
+  };
+}
+
+export const LoginPIN = connect(
+  mapStateToProps,
+  {}
+)(LoginPINClass);
+
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
