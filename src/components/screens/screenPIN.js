@@ -138,45 +138,52 @@ export class ConfirmerPIN extends Component {
 class LoginPINClass extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       buttonDisabled: true,
       pins: [],
       nbEssai: 0,
-      nbEssaiAutorise: 90,
+      nbEssaiAutorise: 3,
       bonPIN: "",
       fingerprintProof: false
     };
   }
 
-  componentWillUnmountMount() {
+  componentWillUnmount() {
+    //alert("quit");
     if (Platform.OS === "android") {
       Expo.LocalAuthentication.cancelAuthenticate();
-      console("Fingerprint OFF");
+      console.log("Fingerprint OFF");
     }
   }
-
-  _gererPINetFingerPrint() {
-    console.log("APPSTATE", AppState.currentState);
-    console.log("NB BLOCS", this.props.blocs.length);
+  componentWillMount() {
+    //alert("will");
+  }
+  _onAppStateChange = () => {
     //Si on réouvre l'appli
-    if (AppState.currentState == "active" && this.state.fingerprintProof) {
+    if (AppState.currentState == "active") {
+      console.log("On réouvre l'appli, nb blocs:", this.props.blocs.length);
       //Si on a pas passé la HOME
       if (this.props.blocs.length == 0) {
-        this.scanBiometrics();
+        console.log("blocs vide => toujours dans le debut, on lance le scan!");
+        if (this.state.fingerprintProof) this.scanBiometrics();
       } else {
-        console.log("il faut ouvrir PIN");
+        console.log("il faut ouvrir Login PIN");
+
         this.props.navigation.navigate("LoginPIN");
+        if (this.state.fingerprintProof) this.scanBiometrics();
       }
     } else {
+      console.log("On ferme l'appli");
       Expo.LocalAuthentication.cancelAuthenticate();
     }
-  }
+  };
 
   async componentDidMount() {
     this.setState({ bonPIN: await SecureStore.getItemAsync("pin") });
     this.checkDeviceForHardware();
-
-    AppState.addEventListener("change", this._gererPINetFingerPrint.bind(this));
+    console.log("add du listener AppState");
+    AppState.addEventListener("change", this._onAppStateChange);
   }
 
   checkDeviceForHardware = async () => {
@@ -196,19 +203,20 @@ class LoginPINClass extends Component {
 
   scanBiometrics = async () => {
     console.log("SCAN", this.state.nbEssai);
-
     let result = await Expo.LocalAuthentication.authenticateAsync(
       "Biometric Scan."
     );
 
     if (result.success) {
-      this.props.navigation.dispatch(
+      this.setState({ nbEssaiAutorise: 3 });
+      /*this.props.navigation.dispatch(
         StackActions.reset({
           index: 0,
           key: null,
           actions: [NavigationActions.navigate({ routeName: "Home" })]
         })
-      );
+      );*/
+      this.props.navigation.navigate("Home");
       return true;
     } else {
       console.log("ERROR FINGERPRINT", result.error);
@@ -222,7 +230,10 @@ class LoginPINClass extends Component {
       if (this.state.nbEssai == this.state.nbEssaiAutorise) {
         await SecureStore.deleteItemAsync("pin");
         await SecureStore.deleteItemAsync("APIToken");
-        //Go Home
+        console.log("remove du listener AppState");
+        AppState.removeEventListener("change", this._onAppStateChange);
+
+        //Go Login
         this.props.navigation.dispatch(
           StackActions.reset({
             index: 0,
@@ -230,11 +241,11 @@ class LoginPINClass extends Component {
             actions: [NavigationActions.navigate({ routeName: "Login" })]
           })
         );
+        //this.props.navigation.navigate("Login")
         return null;
       }
 
       //alert(result.error);
-
       if (AppState.currentState == "active") {
         console.log("Relance de Scan", AppState.currentState);
         this.scanBiometrics();
@@ -242,28 +253,36 @@ class LoginPINClass extends Component {
     }
   };
 
-  async checkPin(PIN) {
+  async checkPinManuel(PIN) {
     console.log("check", PIN);
     console.log("nb blocs", this.props.blocs.length);
     if (PIN == this.state.bonPIN) {
+      this.setState({ nbEssaiAutorise: 3 });
       // On verifie si c'est le premier login ou pas
       if (this.props.blocs.length == 0) {
-        this.props.navigation.dispatch(
+        /*this.props.navigation.dispatch(
           StackActions.reset({
             index: 0,
             key: null,
             actions: [NavigationActions.navigate({ routeName: "Home" })]
           })
-        );
+        );*/
+        this.props.navigation.navigate("Home");
       } else {
+        console.log("Retour Arriere");
+        this.props.navigation.navigate("Home");
         this.props.navigation.goBack();
       }
     } else {
       //Alert.alert("Wrong Pin");
+
       if (this.state.nbEssai == this.state.nbEssaiAutorise - 1) {
         //alert("Vous allez être deconnecté");
         await SecureStore.deleteItemAsync("pin");
         await SecureStore.deleteItemAsync("APIToken");
+
+        console.log("remove du listener AppState");
+        AppState.removeEventListener("change", this._onAppStateChange);
 
         this.props.navigation.dispatch(
           StackActions.reset({
@@ -274,10 +293,10 @@ class LoginPINClass extends Component {
         );
         return false;
       }
+
       this.setState({ nbEssai: this.state.nbEssai + 1 });
       return false;
     }
-    //this.refs.pin.reset();
   }
 
   render() {
@@ -318,7 +337,7 @@ class LoginPINClass extends Component {
             //console.log("pin", value);
             this.setState({ pins: value });
             if (value.length == 4) {
-              this.checkPin(value);
+              this.checkPinManuel(value);
               this.refs.pin.reset();
             }
           }}
@@ -342,42 +361,6 @@ export const LoginPIN = connect(
   mapStateToProps,
   {}
 )(LoginPINClass);
-
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-
-//Useless
-/*
-export default class Main extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-  render() {
-    return <RootStackNav screenProps={this.props.navigation} />;
-  }
-}
-
-export const RootStackNav = createStackNavigator({
-  DefinirPIN: {
-    screen: DefinirPIN,
-    navigationOptions: {
-      header: null
-    }
-  },
-  ConfirmerPIN: {
-    screen: ConfirmerPIN,
-    navigationOptions: {
-      header: null
-    }
-  },
-  LoginPIN: {
-    screen: LoginPIN,
-    navigationOptions: {
-      header: null
-    }
-  }
-});*/
 
 const styles = StyleSheet.create({
   container: {
