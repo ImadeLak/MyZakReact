@@ -27,6 +27,7 @@ export default class AppNavigator extends React.Component {
   }
 }
 
+//test sof
 /*const choix = () => {
   try {
     pin = SecureStore.getItemAsync("pin");
