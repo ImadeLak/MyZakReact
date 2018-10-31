@@ -118,7 +118,7 @@ class LoginScreen extends Component {
 
             <Row size={2}>
               <Col size={1} style={{ alignItems: "center" }}>
-                <Container>
+                <Container style={{ backgroundColor: "transparent" }}>
                   <Content style={{ padding: 15, width: DEVICE_WIDTH }}>
                     <Item
                       rounded

@@ -175,7 +175,8 @@ class LoginPINClass extends Component {
       }
     } else {
       console.log("On ferme l'appli");
-      Expo.LocalAuthentication.cancelAuthenticate();
+      if (Platform.OS === "android")
+        Expo.LocalAuthentication.cancelAuthenticate();
     }
   };
 

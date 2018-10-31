@@ -194,6 +194,7 @@ class Test extends React.Component {
 
     if (item.etat == "inactif") backgroundColor = "#D5D8DC";
 
+    infoMajeure = "init";
     if (item.nature == "maj_immo")
       infoMajeure =
         item.solde_immo
