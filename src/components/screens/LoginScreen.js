@@ -71,6 +71,7 @@ class LoginScreen extends Component {
     //Appel API Django
     APIlogin(this.props.username, this.props.password).then(
       async responseData => {
+        //APIlogin("mamade93150@gmail.com", "aaaaaa11").then(async responseData => {
         if (responseData.token) {
           await SecureStore.setItemAsync("APIToken", responseData.token);
           setTimeout(() => {
