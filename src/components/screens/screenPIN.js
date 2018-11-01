@@ -151,30 +151,19 @@ class LoginPINClass extends Component {
 
   componentWillUnmount() {
     //alert("quit");
+    console.log("REMOVE Listener");
+    AppState.removeEventListener("change", this._onAppStateChange);
     if (Platform.OS === "android") {
       Expo.LocalAuthentication.cancelAuthenticate();
       console.log("Fingerprint OFF");
     }
   }
-  componentWillMount() {
-    //alert("will");
-  }
+
   _onAppStateChange = () => {
     //Si on réouvre l'appli
     if (AppState.currentState == "active") {
-      console.log("On réouvre l'appli, nb blocs:", this.props.blocs.length);
-      //Si on a pas passé la HOME
-      if (this.props.blocs.length == 0) {
-        console.log("blocs vide => toujours dans le debut, on lance le scan!");
-        if (this.state.fingerprintProof) this.scanBiometrics();
-      } else {
-        console.log("il faut ouvrir Login PIN");
-
-        this.props.navigation.navigate("LoginPIN");
-        if (this.state.fingerprintProof) this.scanBiometrics();
-      }
+      if (this.state.fingerprintProof) this.scanBiometrics();
     } else {
-      console.log("On ferme l'appli");
       if (Platform.OS === "android")
         Expo.LocalAuthentication.cancelAuthenticate();
     }
@@ -183,7 +172,7 @@ class LoginPINClass extends Component {
   async componentDidMount() {
     this.setState({ bonPIN: await SecureStore.getItemAsync("pin") });
     this.checkDeviceForHardware();
-    console.log("add du listener AppState");
+    console.log("ADD Listener");
     AppState.addEventListener("change", this._onAppStateChange);
   }
 
@@ -210,14 +199,14 @@ class LoginPINClass extends Component {
 
     if (result.success) {
       this.setState({ nbEssaiAutorise: 3 });
-      /*this.props.navigation.dispatch(
+      this.props.navigation.dispatch(
         StackActions.reset({
           index: 0,
           key: null,
           actions: [NavigationActions.navigate({ routeName: "Home" })]
         })
-      );*/
-      this.props.navigation.navigate("Home");
+      );
+      //this.props.navigation.navigate("Home");
       return true;
     } else {
       console.log("ERROR FINGERPRINT", result.error);
@@ -231,7 +220,7 @@ class LoginPINClass extends Component {
       if (this.state.nbEssai == this.state.nbEssaiAutorise) {
         await SecureStore.deleteItemAsync("pin");
         await SecureStore.deleteItemAsync("APIToken");
-        console.log("remove du listener AppState");
+        console.log("REMOVE du listener AppState");
         AppState.removeEventListener("change", this._onAppStateChange);
 
         //Go Login
@@ -255,25 +244,21 @@ class LoginPINClass extends Component {
   };
 
   async checkPinManuel(PIN) {
-    console.log("check", PIN);
-    console.log("nb blocs", this.props.blocs.length);
+    console.log("check manuel", PIN);
+    //console.log("nb blocs", this.props.blocs.length);
     if (PIN == this.state.bonPIN) {
       this.setState({ nbEssaiAutorise: 3 });
       // On verifie si c'est le premier login ou pas
-      if (this.props.blocs.length == 0) {
-        /*this.props.navigation.dispatch(
-          StackActions.reset({
-            index: 0,
-            key: null,
-            actions: [NavigationActions.navigate({ routeName: "Home" })]
-          })
-        );*/
-        this.props.navigation.navigate("Home");
-      } else {
-        console.log("Retour Arriere");
-        this.props.navigation.navigate("Home");
-        this.props.navigation.goBack();
-      }
+
+      this.props.navigation.dispatch(
+        StackActions.reset({
+          index: 0,
+          key: null,
+          actions: [NavigationActions.navigate({ routeName: "Home" })]
+        })
+      );
+      //this.props.navigation.navigate("Home");
+      //ICI ON DEVRAI COUPER LE FINGERPRINT
     } else {
       //Alert.alert("Wrong Pin");
 
@@ -282,7 +267,7 @@ class LoginPINClass extends Component {
         await SecureStore.deleteItemAsync("pin");
         await SecureStore.deleteItemAsync("APIToken");
 
-        console.log("remove du listener AppState");
+        console.log("REMOVE du listener AppState");
         AppState.removeEventListener("change", this._onAppStateChange);
 
         this.props.navigation.dispatch(
