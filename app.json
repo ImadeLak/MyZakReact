@@ -12,6 +12,11 @@
     "splash": {
       "image": "./src/style/images/splash.png",
       "backgroundColor": "#00b894"
+    },
+    "ios": {
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "FaceID Cousiiiiinnn"
+      }
     }
   }
 }

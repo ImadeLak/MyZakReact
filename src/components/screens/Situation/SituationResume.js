@@ -243,14 +243,6 @@ class SituationResume extends React.Component {
                         }}
                       >
                         <View style={{ alignItems: "center" }}>
-                          <Text
-                            style={[
-                              material.subheadingWhite,
-                              systemWeights.regular
-                            ]}
-                          >
-                            Montant de la Zakat
-                          </Text>
                           <View style={{ flexDirection: "row" }}>
                             <Text
                               style={[
@@ -281,6 +273,16 @@ class SituationResume extends React.Component {
                               €
                             </Text>
                           </View>
+
+                          <Text
+                            style={[
+                              material.captionWhite,
+                              systemWeights.regular,
+                              { color: materialColors.whitePrimary }
+                            ]}
+                          >
+                            MONTANT DE LA ZAKAT
+                          </Text>
                         </View>
 
                         <Image

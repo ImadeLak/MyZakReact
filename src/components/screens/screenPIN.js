@@ -197,15 +197,20 @@ class LoginPINClass extends Component {
   checkForBiometrics = async () => {
     let biometricRecords = await Expo.LocalAuthentication.isEnrolledAsync();
     if (biometricRecords) {
-      this.setState({ fingerprintProof: true });
-      this.scanBiometrics();
+      console.log("DEVICE_NAME", Expo.Constants.deviceName);
+      if (Expo.Constants.deviceName == "iPhone de Sofiane") {
+        this.setState({ fingerprintProof: false });
+      } else {
+        this.setState({ fingerprintProof: true });
+        this.scanBiometrics();
+      }
     }
   };
 
   scanBiometrics = async () => {
     console.log("SCAN", this.state.nbEssai);
     let result = await Expo.LocalAuthentication.authenticateAsync(
-      "Biometric Scan."
+      "Scan Cousin !"
     );
 
     if (result.success) {

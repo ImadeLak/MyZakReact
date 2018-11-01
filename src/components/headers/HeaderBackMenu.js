@@ -34,9 +34,10 @@ class HeaderBackMenu extends React.Component {
       <View
         style={{
           flexDirection: "row",
-          height: 75,
+          height: 85,
           paddingTop: 30,
-          margin: 0,
+          //margin: 0,
+          alignItems: "center",
           justifyContent: "space-between"
         }}
       >
@@ -45,13 +46,7 @@ class HeaderBackMenu extends React.Component {
         </Button>
 
         <View style={{ flex: 1, justifyContent: "center" }}>
-          <Text
-            style={[
-              material.titleWhite,
-              systemWeights.regular,
-              { marginTop: 2 }
-            ]}
-          >
+          <Text style={[material.titleWhite, systemWeights.regular]}>
             {this.props.title}
           </Text>
         </View>
@@ -62,27 +57,22 @@ class HeaderBackMenu extends React.Component {
               flexDirection: "row",
               alignItems: "center",
               borderWidth: 1,
-              borderColor: "rgba(0,0,0,0.4)",
+              borderColor: "transparent",
               borderTopLeftRadius: 10,
               borderBottomLeftRadius: 10,
               backgroundColor: "rgba(0,0,0,0.4)",
-              paddingHorizontal: 10
+              paddingHorizontal: 10,
+              flexDirection: "column",
+              alignItems: "flex-end",
+              marginRight: -1
             }}
           >
-            <View
-              style={{
-                flexDirection: "column",
-                alignItems: "flex-end",
-                marginRight: 0
-              }}
-            >
-              <Text style={[material.body1White, systemWeights.light]}>
-                Nissab - {this.props.methodeSelectionnee}
-              </Text>
-              <Text style={[material.body1White, systemWeights.light]}>
-                3 120,54 €
-              </Text>
-            </View>
+            <Text style={[material.body1White, systemWeights.light]}>
+              Nissab - {this.props.methodeSelectionnee}
+            </Text>
+            <Text style={[material.body1White, systemWeights.light]}>
+              3 120,54 €
+            </Text>
           </View>
         </TouchableOpacity>
 
