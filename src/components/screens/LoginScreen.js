@@ -69,27 +69,28 @@ class LoginScreen extends Component {
     }).start();
 
     //Appel API Django
-    //APIlogin(this.props.username, this.props.password).then(
-    //async responseData => {
-    APIlogin("mamade93150@gmail.com", "aaaaaa11").then(async responseData => {
-      if (responseData.token) {
-        await SecureStore.setItemAsync("APIToken", responseData.token);
-        setTimeout(() => {
-          // On reset le stack et on va à l'accueil
+    APIlogin(this.props.username, this.props.password).then(
+      async responseData => {
+        //APIlogin("mamade93150@gmail.com", "aaaaaa11").then(async responseData => {
+        if (responseData.token) {
+          await SecureStore.setItemAsync("APIToken", responseData.token);
+          setTimeout(() => {
+            // On reset le stack et on va à l'accueil
+            this.setState({ loginLoading: false });
+            this.props.navigation.navigate("DefinirPIN");
+          }, 300);
+        } else {
           this.setState({ loginLoading: false });
-          this.props.navigation.navigate("DefinirPIN");
-        }, 300);
-      } else {
-        this.setState({ loginLoading: false });
-        //Le Toast qui va bien
-        Toast.show({
-          text: "Erreur de connexion!",
-          buttonText: "Okay",
-          type: "danger"
-        });
+          //Le Toast qui va bien
+          Toast.show({
+            text: "Erreur de connexion!",
+            buttonText: "Okay",
+            type: "danger"
+          });
+        }
+        // this.buttonAnimated.setValue(0);
       }
-      // this.buttonAnimated.setValue(0);
-    });
+    );
   }
 
   render() {
