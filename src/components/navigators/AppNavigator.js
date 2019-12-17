@@ -1,6 +1,6 @@
 import React from "react";
 import { Root } from "native-base";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 
 //Les sreens
 
@@ -9,23 +9,17 @@ import LoginScreen from "../screens/LoginScreen";
 //import Home from "../screens/Home";
 import { MonDrawer } from "../navigators/HomeDrawerNavigator";
 
-import { SecureStore } from "expo";
+import * as SecureStore from "expo-secure-store";
 
-import { createStackNavigator, createDrawerNavigator } from "react-navigation";
+import {
+  createDrawerNavigator,
+  createAppContainer,
+  createStackNavigator
+} from "react-navigation";
+
 import { NavigationActions, StackActions } from "react-navigation";
 
 import { LoginPIN, DefinirPIN, ConfirmerPIN } from "../screens/screenPIN";
-
-export default class AppNavigator extends React.Component {
-  render() {
-    return (
-      //Le Root pour le Toast
-      <Root>
-        <MonAppNavigator />
-      </Root>
-    );
-  }
-}
 
 //test sof
 /*const choix = () => {
@@ -51,7 +45,11 @@ export class ChoixScreen extends React.Component {
     super(props);
   }
   render() {
-    return <View />;
+    return (
+      <View>
+        <Text>Hello</Text>
+      </View>
+    );
   }
   async componentDidMount() {
     try {
@@ -61,7 +59,7 @@ export class ChoixScreen extends React.Component {
       if (pin != null && APIToken != null) {
         route = "LoginPIN";
       } else {
-        route = "Login";
+        route = "LoginPIN";
       }
     } catch (e) {
       console.log("erreur :", e);
@@ -78,40 +76,25 @@ export class ChoixScreen extends React.Component {
   }
 }
 
-export const MonAppNavigator = createStackNavigator(
+class Test extends React.Component {
+  constructor(props) {
+    super(props);
+    console.log("CONSTRUCTEUR DE TEST");
+  }
+  render() {
+    console.log("RENDER DE TEST");
+    return (
+      <View>
+        <Text>Hello</Text>
+      </View>
+    );
+  }
+}
+
+export const RootStack = createStackNavigator(
   {
-    Home: {
-      screen: MonDrawer,
-      navigationOptions: {
-        header: null
-      }
-    },
-    Login: {
-      screen: LoginScreen,
-      navigationOptions: {
-        header: null
-      }
-    },
-    Choix: {
-      screen: ChoixScreen,
-      navigationOptions: {
-        header: null
-      }
-    },
-    DefinirPIN: {
-      screen: DefinirPIN,
-      navigationOptions: {
-        header: null
-      }
-    },
-    ConfirmerPIN: {
-      screen: ConfirmerPIN,
-      navigationOptions: {
-        header: null
-      }
-    },
-    LoginPIN: {
-      screen: LoginPIN,
+    Test: {
+      screen: Test,
       navigationOptions: {
         header: null
       }
@@ -119,6 +102,10 @@ export const MonAppNavigator = createStackNavigator(
   },
 
   {
-    initialRouteName: "Choix"
+    initialRouteName: "Test"
   }
 );
+
+const AppContainer = createAppContainer(RootStack);
+
+export default AppContainer;

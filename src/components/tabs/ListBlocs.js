@@ -10,7 +10,7 @@ import {
   TouchableOpacity
 } from "react-native";
 import { LargeList } from "react-native-largelist";
-import { LinearGradient } from "expo";
+import { LinearGradient } from "expo-linear-gradient";
 
 import styles, { CLAIR, GREY, FONCE, MAINCOLOR } from "../../style/zakStyles";
 import bokeh from "../../style/images/bokeh3.png";

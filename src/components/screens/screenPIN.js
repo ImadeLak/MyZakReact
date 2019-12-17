@@ -13,7 +13,10 @@ import {
   AppState
 } from "react-native";
 import { createStackNavigator } from "react-navigation";
-import Expo, { SecureStore } from "expo";
+//import Expo from "expo";
+import * as SecureStore from "expo-secure-store";
+import Constants from "expo-constants";
+import * as LocalAuthentication from "expo-local-authentication";
 import { Toast, Icon } from "native-base";
 import { NavigationActions, StackActions } from "react-navigation";
 
@@ -152,7 +155,7 @@ class LoginPINClass extends Component {
   componentWillUnmount() {
     //alert("quit");
     if (Platform.OS === "android") {
-      Expo.LocalAuthentication.cancelAuthenticate();
+      LocalAuthentication.cancelAuthenticate();
       console.log("Fingerprint OFF");
     }
   }
@@ -175,8 +178,7 @@ class LoginPINClass extends Component {
       }
     } else {
       console.log("On ferme l'appli");
-      if (Platform.OS === "android")
-        Expo.LocalAuthentication.cancelAuthenticate();
+      if (Platform.OS === "android") LocalAuthentication.cancelAuthenticate();
     }
   };
 
@@ -188,17 +190,17 @@ class LoginPINClass extends Component {
   }
 
   checkDeviceForHardware = async () => {
-    let compatible = await Expo.LocalAuthentication.hasHardwareAsync();
+    let compatible = await LocalAuthentication.hasHardwareAsync();
     if (compatible) {
       this.checkForBiometrics();
     }
   };
 
   checkForBiometrics = async () => {
-    let biometricRecords = await Expo.LocalAuthentication.isEnrolledAsync();
+    let biometricRecords = await LocalAuthentication.isEnrolledAsync();
     if (biometricRecords) {
-      console.log("DEVICE_NAME", Expo.Constants.deviceName);
-      if (Expo.Constants.deviceName == "iPhone de Sofiane") {
+      console.log("DEVICE_NAME", Constants.deviceName);
+      if (Constants.deviceName == "iPhone de Sofiane") {
         this.setState({ fingerprintProof: false });
       } else {
         this.setState({ fingerprintProof: true });
@@ -209,20 +211,22 @@ class LoginPINClass extends Component {
 
   scanBiometrics = async () => {
     console.log("SCAN", this.state.nbEssai);
-    let result = await Expo.LocalAuthentication.authenticateAsync(
-      "Scan Cousin !"
-    );
+    let result = await LocalAuthentication.authenticateAsync("Scan Cousin !");
 
     if (result.success) {
       this.setState({ nbEssaiAutorise: 3 });
-      /*this.props.navigation.dispatch(
+
+      console.log("remove du listener AppState");
+      AppState.removeEventListener("change", this._onAppStateChange);
+
+      this.props.navigation.dispatch(
         StackActions.reset({
           index: 0,
           key: null,
           actions: [NavigationActions.navigate({ routeName: "Home" })]
         })
-      );*/
-      this.props.navigation.navigate("Home");
+      );
+      //this.props.navigation.navigate("Home");
       return true;
     } else {
       console.log("ERROR FINGERPRINT", result.error);

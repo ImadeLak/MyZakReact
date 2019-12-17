@@ -9,7 +9,8 @@ import { setBlocs, setComptesBancaire } from "../../actions/MesActions";
 
 import { APIgetUserHistorique } from "../../lib/DjangoAPI";
 
-import { Font, AppLoading, SecureStore } from "expo";
+import { Font, AppLoading } from "expo";
+import * as SecureStore from "expo-secure-store";
 
 class Home extends Component {
   static navigationOptions = {

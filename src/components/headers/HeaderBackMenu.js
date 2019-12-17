@@ -13,7 +13,7 @@ import { View, TouchableOpacity, ScrollView, Text } from "react-native";
 import { MAINCOLOR, GREEN } from "../../style/zakStyles";
 import MonModal from "../MonModal";
 import { modalText } from "../../texte/modalText";
-import { LinearGradient } from "expo";
+import { LinearGradient } from "expo-linear-gradient";
 import { material, systemWeights } from "react-native-typography";
 
 import { connect } from "react-redux";

@@ -1,4 +1,4 @@
-import { SecureStore } from "expo";
+import * as SecureStore from "expo-secure-store";
 
 //const DJANGO_URL = "http://192.168.1.14:8000";
 //const DJANGO_URL = "http://192.168.205.182:8000";

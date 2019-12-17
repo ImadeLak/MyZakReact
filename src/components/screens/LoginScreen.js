@@ -18,8 +18,9 @@ import {
   Toast,
   Spinner
 } from "native-base";
-import { Col, Row, Grid } from "react-native-easy-grid";
-import { Font, AppLoading, SecureStore } from "expo";
+//import { Col, Row, Grid } from "react-native-easy-grid";
+import { Font, AppLoading } from "expo";
+import * as SecureStore from "expo-secure-store";
 
 import { APIlogin } from "../../lib/DjangoAPI";
 
@@ -45,16 +46,18 @@ class LoginScreen extends Component {
     };
     this._login = this._login.bind(this);
     this.buttonAnimated = new Animated.Value(0);
+    console.log("CONSTRUCTEUR DU LOGIN");
   }
 
   //Petit soucis pour NativeBAse
+  /*
   async componentWillMount() {
     await Font.loadAsync({
       Roboto: require("native-base/Fonts/Roboto.ttf"),
       Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf")
     });
     this.setState({ isReady: true });
-  }
+  }*/
 
   _login() {
     //Si on est deja en loading on sort
@@ -102,22 +105,29 @@ class LoginScreen extends Component {
       inputRange: [0, 1],
       outputRange: [DEVICE_WIDTH - MARGIN, MARGIN]
     });
+    console.log("DANS LE RENDER DE LOGIN");
     return (
       <ImageBackground style={monStyle.pictureBackground} source={bgSrc}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? null : "padding"}
         >
-          <Grid style={{ alignItems: "center" }}>
-            <Row size={2} style={monStyle.containerLogo}>
-              <Col size={1} style={{ alignItems: "center" }}>
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "space-between"
+            }}
+          >
+            <View style={monStyle.containerLogo}>
+              <View style={{ alignItems: "center" }}>
                 <Image source={logoImg} style={monStyle.imageLogo} />
                 <Text style={monStyle.textLogo}>MY ZAKAT</Text>
-              </Col>
-            </Row>
+              </View>
+            </View>
 
-            <Row size={2}>
-              <Col size={1} style={{ alignItems: "center" }}>
+            <View>
+              <View style={{ alignItems: "center" }}>
                 <Container style={{ backgroundColor: "transparent" }}>
                   <Content style={{ padding: 15, width: DEVICE_WIDTH }}>
                     <Item
@@ -176,9 +186,9 @@ class LoginScreen extends Component {
                     </Animated.View>
                   </Content>
                 </Container>
-              </Col>
-            </Row>
-          </Grid>
+              </View>
+            </View>
+          </View>
         </KeyboardAvoidingView>
       </ImageBackground>
     );

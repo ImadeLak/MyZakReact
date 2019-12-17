@@ -5,7 +5,7 @@ import { NavigationActions, StackActions } from "react-navigation";
 import { MAINCOLOR } from "../../style/zakStyles";
 
 import { connect } from "react-redux";
-import { SecureStore } from "expo";
+import * as SecureStore from "expo-secure-store";
 
 export default class Logout extends Component {
   static navigationOptions = {

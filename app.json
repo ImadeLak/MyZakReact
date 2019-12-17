@@ -1,6 +1,6 @@
 {
   "expo": {
-    "sdkVersion": "30.0.0",
+    "sdkVersion": "33.0.0",
     "orientation": "portrait",
     "name": "myZak",
     "android": {
@@ -8,7 +8,7 @@
     },
     "slug": "myzak2",
     "version": "0.3.5",
-    "description": "My zakat for life",
+    "description": "My zakat for life, maj expo 33",
     "splash": {
       "image": "./src/style/images/splash.png",
       "backgroundColor": "#00b894"

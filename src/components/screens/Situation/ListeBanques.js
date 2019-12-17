@@ -9,7 +9,7 @@ import {
 } from "react-native";
 
 import moment from "moment";
-import { LinearGradient } from "expo";
+import { LinearGradient } from "expo-linear-gradient";
 
 import styles, {
   CLAIR,

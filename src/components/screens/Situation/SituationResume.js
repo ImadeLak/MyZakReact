@@ -8,7 +8,8 @@ import {
   ScrollView,
   ActivityIndicator
 } from "react-native";
-import { Font, AppLoading, LinearGradient } from "expo";
+import { Font, AppLoading } from "expo";
+import { LinearGradient } from "expo-linear-gradient";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import {
   material,
@@ -71,16 +72,16 @@ class SituationResume extends React.Component {
 
   async componentWillMount() {
     //Pour partout dans l'appli
-    await Font.loadAsync({
+    /*await Font.loadAsync({
       Roboto: require("native-base/Fonts/Roboto.ttf"),
       Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf")
-    });
+    });*/
     //On verifie que c'est la 1ere fois
     if (this.props.blocs.length == 0) {
       //alert(await SecureStore.getItemAsync("pin"));
       //alert("pas de bloc");
       APIgetUserHistorique().then(responseData => {
-        //console.log(responseData);
+        console.log(responseData.comptes);
         this.props.setBlocs(responseData.situation.blocs.blocs);
         this.props.setComptesBancaire(responseData.comptes);
         //alert(this.props.blocs.length);

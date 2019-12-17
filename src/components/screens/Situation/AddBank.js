@@ -11,7 +11,7 @@ import {
 } from "native-base";
 import { View, Alert } from "react-native";
 import LottieView from "lottie-react-native";
-import { LinearGradient } from "expo";
+import { LinearGradient } from "expo-linear-gradient";
 import HeaderBack from "../../headers/HeaderBack";
 import styles, {
   GREEN,
